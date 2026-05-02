@@ -1,0 +1,14 @@
+﻿namespace ExamVault.Api.Domain.Entities
+{
+    public class SesionMonitoria
+    {
+        public int IdSesion { get; set; }
+        public string Estado { get; set; } = string.Empty;
+        public DateTime SolicitadoEn { get; set; }
+        public DateTime FechaProgramada { get; set; }
+        public string Modalidad { get; set; } = string.Empty;
+        public string? Ubicacion { get; set; }
+        public int IdUsuario { get; set; }
+        public int IdMonitor { get; set; }
+    }
+}
