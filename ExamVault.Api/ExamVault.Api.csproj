@@ -6,20 +6,36 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
-		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.17.0" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
+  <ItemGroup>
+    <Compile Remove="Common\**" />
+    <Compile Remove="Infraestructura\Storage\**" />
+    <Content Remove="Common\**" />
+    <Content Remove="Infraestructura\Storage\**" />
+    <EmbeddedResource Remove="Common\**" />
+    <EmbeddedResource Remove="Infraestructura\Storage\**" />
+    <None Remove="Common\**" />
+    <None Remove="Infraestructura\Storage\**" />
+  </ItemGroup>
 
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.4" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.4">
+	<ItemGroup>
+		<PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+		<PackageReference Include="BetterStack.Logs.Serilog" Version="1.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
+		<PackageReference Include="Sentry.AspNetCore" Version="6.5.0" />
+		<PackageReference Include="Sentry.Maui" Version="6.5.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+		<PackageReference Include="Serilog.Sinks.Http" Version="9.2.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.18.0" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
+
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.4">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.8">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -27,14 +43,13 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Middleware\" />
-    <Folder Include="Common\Extensions\" />
-    <Folder Include="Infrastructure\Storage\" />
-    <Folder Include="Modules\Administracion\DTOs\" />
-    <Folder Include="Modules\Administracion\Controllers\" />
-    <Folder Include="Modules\Monitores\DTOs\" />
-    <Folder Include="Modules\Monitores\Controllers\" />
-    <Folder Include="Modules\Repositorio\DTOs\" />
+    <Folder Include="Comun\Extensiones\" />
+    <Folder Include="Comun\Middlewares\" />
+    <Folder Include="Infraestructura\Datos\Almacenamiento\" />
+    <Folder Include="Modulos\Administracion\Controladores\" />
+    <Folder Include="Modulos\Administracion\DTOs\" />
+    <Folder Include="Modulos\Monitores\Controlador\" />
+    <Folder Include="Modulos\Monitores\DTOs\" />
   </ItemGroup>
 
 </Project>
