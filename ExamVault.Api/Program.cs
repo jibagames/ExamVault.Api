@@ -1,12 +1,24 @@
 using ExamVault.Api.Infraestructura.Datos;
+using ExamVault.Api.Modulos.Autenticacion.Aplicacion.Interfaces;
+using ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios;
+using ExamVault.Api.Modulos.Autenticacion.Infraestructura.Persistencia.Repositorios;
+using ExamVault.Api.Modulos.Autenticacion.Infraestructura.Seguridad;
+using ExamVault.Api.Modulos.Repositorio.Aplicacion.Interfaces;
+using ExamVault.Api.Modulos.Repositorio.Infraestructura.Persistencia.Repositorios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Serilog;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
+builder.Services.AddScoped<IInstitucionRepositorio, InstitucionRepositorio>();
+builder.Services.AddScoped<IEncriptadorServicio, EncriptadorServicio>();
+builder.Services.AddScoped<ITokenServicio, TokenServicio>();
+builder.Services.AddScoped<IAutenticacionServicio, AutenticacionServicio>();
+builder.Services.AddScoped<IMaterialRepositorio, MaterialRepositorio>();
 var logtailToken = builder.Configuration["Logtail:SourceToken"];
 
 Log.Logger = new LoggerConfiguration()
@@ -20,7 +32,7 @@ builder.Host.UseSerilog();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is missing");
+var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("La clave JWT no está configurada");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -59,7 +71,5 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSentryTracing();
 app.MapControllers();
-
 app.Run();

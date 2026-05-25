@@ -1,4 +1,9 @@
-﻿using ExamVault.Api.Dominio.Entidades;
+﻿using ExamVault.Api.Modulos.Administracion.Dominio.Entidades;
+using ExamVault.Api.Modulos.Autenticacion.Dominio.Entidades;
+using ExamVault.Api.Modulos.Autenticacion.Infraestructura.Persistencia.Configuraciones;
+using ExamVault.Api.Modulos.Monitores.Dominio.Entidades;
+using ExamVault.Api.Modulos.Repositorio.Dominio.Entidades;
+using ExamVault.Api.Modulos.Repositorio.Infraestructura.Persistencia.Configuraciones;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamVault.Api.Infraestructura.Datos
@@ -17,7 +22,7 @@ namespace ExamVault.Api.Infraestructura.Datos
         public DbSet<Material> Materiales { get; set; }
         public DbSet<TipoMaterial> TiposMateriales { get; set; }
         public DbSet<Descarga> Descargas { get; set; }
-        public DbSet<Dominio.Entidades.Monitor> Monitores { get; set; }
+        public DbSet<Modulos.Monitores.Dominio.Entidades.Monitor> Monitores { get; set; }
         public DbSet<MonitorMateria> MonitoresMaterias { get; set; }
         public DbSet<SesionMonitoria> SesionesMonitores { get; set; }
         public DbSet<Calificacion> Calificaciones { get; set; }
@@ -32,29 +37,31 @@ namespace ExamVault.Api.Infraestructura.Datos
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.ApplyConfiguration(new MaterialConfiguracion());
+            modelBuilder.ApplyConfiguration(new TipoMaterialConfiguracion());
+            modelBuilder.ApplyConfiguration(new DescargaConfiguracion());
             modelBuilder.Entity<Institucion>().HasKey(e => e.IdInstituciones);
-            modelBuilder.Entity<Usuario>().HasKey(e => e.IdUsuario);
-            modelBuilder.Entity<Rol>().HasKey(e => e.IdRol);
+            modelBuilder.ApplyConfiguration(new UsuarioConfiguracion());
+            modelBuilder.ApplyConfiguration(new RolConfiguracion());
             modelBuilder.Entity<Programa>().HasKey(e => e.IdPrograma);
             modelBuilder.Entity<Materia>().HasKey(e => e.IdMateria);
-            modelBuilder.Entity<Descarga>().HasKey(e => e.IdDescarga);
-            modelBuilder.Entity<Dominio.Entidades.Monitor>().HasKey(e => e.IdMonitor);
+            modelBuilder.Entity<Modulos.Monitores.Dominio.Entidades.Monitor>().HasKey(e => e.IdMonitor);
             modelBuilder.Entity<SesionMonitoria>().HasKey(e => e.IdSesion);
             modelBuilder.Entity<Calificacion>().HasKey(e => e.IdCalificacion);
             modelBuilder.Entity<Plan>().HasKey(e => e.IdPlanes);
             modelBuilder.Entity<Suscripcion>().HasKey(e => e.IdSuscripciones);
-            modelBuilder.Entity<UsuarioRol>().HasKey(ur => new { ur.IdUsuario, ur.IdRol });
+            modelBuilder.ApplyConfiguration(new UsuarioRolConfiguracion());
             modelBuilder.Entity<ProgramaMateria>().HasKey(pm => new { pm.IdPrograma, pm.IdMateria });
             modelBuilder.Entity<MonitorMateria>().HasKey(mm => new { mm.IdMonitor, mm.IdMateria });
-            modelBuilder.Entity<Permisos>().HasKey(p => p.IdPermiso);
-            modelBuilder.Entity<PermisosAtributos>().HasKey(p => p.IdPermisoAtributo);
+            modelBuilder.ApplyConfiguration(new PermisosConfiguracion());
+            modelBuilder.ApplyConfiguration(new PermisosAtributosConfiguracion());
 
             modelBuilder.Entity<Usuario>(entity =>
             {
                 entity.HasOne<Institucion>().WithMany().HasForeignKey(u => u.IdInstituciones);
             });
 
-            modelBuilder.Entity<Dominio.Entidades.Monitor>(entity =>
+            modelBuilder.Entity<Modulos.Monitores.Dominio.Entidades.Monitor>(entity =>
             {
                 entity.HasOne<Usuario>().WithMany().HasForeignKey(m => m.IdUsuario);
             });
@@ -101,7 +108,7 @@ namespace ExamVault.Api.Infraestructura.Datos
                 entity.Property(e => e.SolicitadoEn).HasColumnType("timestamp with time zone");
                 entity.Property(e => e.FechaProgramada).HasColumnType("timestamp with time zone");
                 entity.HasOne<Usuario>().WithMany().HasForeignKey(s => s.IdUsuario);
-                entity.HasOne<Dominio.Entidades.Monitor>().WithMany().HasForeignKey(s => s.IdMonitor);
+                entity.HasOne<Modulos.Monitores.Dominio.Entidades.Monitor>().WithMany().HasForeignKey(s => s.IdMonitor);
             });
 
             modelBuilder.Entity<Calificacion>(entity =>

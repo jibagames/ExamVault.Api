@@ -18,6 +18,8 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.4.1" />
+		<PackageReference Include="AWSSDK.S3" Version="4.0.23.4" />
 		<PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
 		<PackageReference Include="BetterStack.Logs.Serilog" Version="1.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
@@ -43,13 +45,24 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Comun\Extensiones\" />
-    <Folder Include="Comun\Middlewares\" />
     <Folder Include="Infraestructura\Datos\Almacenamiento\" />
-    <Folder Include="Modulos\Administracion\Controladores\" />
-    <Folder Include="Modulos\Administracion\DTOs\" />
-    <Folder Include="Modulos\Monitores\Controlador\" />
-    <Folder Include="Modulos\Monitores\DTOs\" />
+    <Folder Include="Modulos\Administracion\Aplicacion\Interfaces\" />
+    <Folder Include="Modulos\Administracion\Aplicacion\Servicios\" />
+    <Folder Include="Modulos\Administracion\Infraestructura\Persistencia\Configuraciones\" />
+    <Folder Include="Modulos\Administracion\Infraestructura\Persistencia\Repositorios\" />
+    <Folder Include="Modulos\Administracion\Infraestructura\Seguridad\" />
+    <Folder Include="Modulos\Administracion\Presentacion\Controladores\" />
+    <Folder Include="Modulos\Administracion\Aplicacion\DTOs\" />
+    <Folder Include="Modulos\Administracion\Presentacion\" />
+    <Folder Include="Modulos\Monitores\Aplicacion\Interfaces\" />
+    <Folder Include="Modulos\Monitores\Aplicacion\Servicios\" />
+    <Folder Include="Modulos\Monitores\Infraestructura\Persistencia\Configuraciones\" />
+    <Folder Include="Modulos\Monitores\Infraestructura\Persistencia\Repositorios\" />
+    <Folder Include="Modulos\Monitores\Infraestructura\Seguridad\" />
+    <Folder Include="Modulos\Monitores\Presentacion\Controladores\" />
+    <Folder Include="Modulos\Monitores\Aplicacion\DTOs\" />
+    <Folder Include="Modulos\Monitores\Presentacion\" />
+    <Folder Include="Modulos\Repositorio\Infraestructura\Seguridad\" />
   </ItemGroup>
 
 </Project>
