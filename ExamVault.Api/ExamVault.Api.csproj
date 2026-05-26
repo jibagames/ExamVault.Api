@@ -46,14 +46,6 @@
 
   <ItemGroup>
     <Folder Include="Infraestructura\Datos\Almacenamiento\" />
-    <Folder Include="Modulos\Administracion\Aplicacion\Interfaces\" />
-    <Folder Include="Modulos\Administracion\Aplicacion\Servicios\" />
-    <Folder Include="Modulos\Administracion\Infraestructura\Persistencia\Configuraciones\" />
-    <Folder Include="Modulos\Administracion\Infraestructura\Persistencia\Repositorios\" />
-    <Folder Include="Modulos\Administracion\Infraestructura\Seguridad\" />
-    <Folder Include="Modulos\Administracion\Presentacion\Controladores\" />
-    <Folder Include="Modulos\Administracion\Aplicacion\DTOs\" />
-    <Folder Include="Modulos\Administracion\Presentacion\" />
     <Folder Include="Modulos\Monitores\Aplicacion\Interfaces\" />
     <Folder Include="Modulos\Monitores\Aplicacion\Servicios\" />
     <Folder Include="Modulos\Monitores\Infraestructura\Persistencia\Configuraciones\" />
@@ -62,7 +54,6 @@
     <Folder Include="Modulos\Monitores\Presentacion\Controladores\" />
     <Folder Include="Modulos\Monitores\Aplicacion\DTOs\" />
     <Folder Include="Modulos\Monitores\Presentacion\" />
-    <Folder Include="Modulos\Repositorio\Infraestructura\Seguridad\" />
   </ItemGroup>
 
 </Project>

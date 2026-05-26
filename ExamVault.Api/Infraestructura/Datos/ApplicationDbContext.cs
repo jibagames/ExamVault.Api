@@ -1,4 +1,5 @@
 ﻿using ExamVault.Api.Modulos.Administracion.Dominio.Entidades;
+using ExamVault.Api.Modulos.Administracion.Infraestructura.Persistencia.Configuraciones;
 using ExamVault.Api.Modulos.Autenticacion.Dominio.Entidades;
 using ExamVault.Api.Modulos.Autenticacion.Infraestructura.Persistencia.Configuraciones;
 using ExamVault.Api.Modulos.Monitores.Dominio.Entidades;
@@ -37,24 +38,29 @@ namespace ExamVault.Api.Infraestructura.Datos
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.ApplyConfiguration(new InstitucionConfiguracion());
+            modelBuilder.ApplyConfiguration(new PlanConfiguracion());
+            modelBuilder.ApplyConfiguration(new AuditoriaConfiguracion());
+            modelBuilder.ApplyConfiguration(new MateriaConfiguracion());
+            modelBuilder.ApplyConfiguration(new ProgramaConfiguracion());
+            modelBuilder.ApplyConfiguration(new ProgramaMateriaConfiguracion());
+            modelBuilder.ApplyConfiguration(new SuscripcionConfiguracion());
+
             modelBuilder.ApplyConfiguration(new MaterialConfiguracion());
             modelBuilder.ApplyConfiguration(new TipoMaterialConfiguracion());
             modelBuilder.ApplyConfiguration(new DescargaConfiguracion());
-            modelBuilder.Entity<Institucion>().HasKey(e => e.IdInstituciones);
+
             modelBuilder.ApplyConfiguration(new UsuarioConfiguracion());
             modelBuilder.ApplyConfiguration(new RolConfiguracion());
-            modelBuilder.Entity<Programa>().HasKey(e => e.IdPrograma);
-            modelBuilder.Entity<Materia>().HasKey(e => e.IdMateria);
+            modelBuilder.ApplyConfiguration(new PermisosConfiguracion());
+            modelBuilder.ApplyConfiguration(new PermisosAtributosConfiguracion());
+            modelBuilder.ApplyConfiguration(new UsuarioRolConfiguracion());
+
             modelBuilder.Entity<Modulos.Monitores.Dominio.Entidades.Monitor>().HasKey(e => e.IdMonitor);
             modelBuilder.Entity<SesionMonitoria>().HasKey(e => e.IdSesion);
             modelBuilder.Entity<Calificacion>().HasKey(e => e.IdCalificacion);
-            modelBuilder.Entity<Plan>().HasKey(e => e.IdPlanes);
-            modelBuilder.Entity<Suscripcion>().HasKey(e => e.IdSuscripciones);
-            modelBuilder.ApplyConfiguration(new UsuarioRolConfiguracion());
-            modelBuilder.Entity<ProgramaMateria>().HasKey(pm => new { pm.IdPrograma, pm.IdMateria });
             modelBuilder.Entity<MonitorMateria>().HasKey(mm => new { mm.IdMonitor, mm.IdMateria });
-            modelBuilder.ApplyConfiguration(new PermisosConfiguracion());
-            modelBuilder.ApplyConfiguration(new PermisosAtributosConfiguracion());
+
 
             modelBuilder.Entity<Usuario>(entity =>
             {

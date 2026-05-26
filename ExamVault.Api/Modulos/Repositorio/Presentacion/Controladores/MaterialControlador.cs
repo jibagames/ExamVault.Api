@@ -20,7 +20,7 @@ namespace ExamVault.Api.Modulos.Repositorio.Presentacion.Controladores
 
         [HttpPost("subir")]
         [Authorize(Roles = "Estudiante,Monitor,Institucion,Profesor,Administrador")]
-        public async Task<IActionResult> SubirMaterial([FromBody] SubirMaterialDto peticion)
+        public async Task<IActionResult> SubirMaterial([FromForm] SubirMaterialDto peticion)
         {
             try
             {
