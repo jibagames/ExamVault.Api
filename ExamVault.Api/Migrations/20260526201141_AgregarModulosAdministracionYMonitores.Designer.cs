@@ -3,6 +3,7 @@ using System;
 using ExamVault.Api.Infraestructura.Datos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ExamVault.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260526201141_AgregarModulosAdministracionYMonitores")]
+    partial class AgregarModulosAdministracionYMonitores
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,9 +44,11 @@ namespace ExamVault.Api.Migrations
                         .HasColumnType("character varying(1000)");
 
                     b.Property<DateTime>("FechaAccion")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<int?>("IdUsuario")
+                    b.Property<int>("IdUsuario")
                         .HasColumnType("integer");
 
                     b.Property<string>("IpOrigen")
@@ -55,7 +60,7 @@ namespace ExamVault.Api.Migrations
 
                     b.HasIndex("IdUsuario");
 
-                    b.ToTable("Auditoria", (string)null);
+                    b.ToTable("Auditorias", (string)null);
                 });
 
             modelBuilder.Entity("ExamVault.Api.Modulos.Administracion.Dominio.Entidades.Institucion", b =>
@@ -584,14 +589,16 @@ namespace ExamVault.Api.Migrations
 
                     b.HasKey("IdTipoMaterial");
 
-                    b.ToTable("TipoMaterial", (string)null);
+                    b.ToTable("TiposMateriales", (string)null);
                 });
 
             modelBuilder.Entity("ExamVault.Api.Modulos.Administracion.Dominio.Entidades.Auditoria", b =>
                 {
                     b.HasOne("ExamVault.Api.Modulos.Autenticacion.Dominio.Entidades.Usuario", null)
                         .WithMany()
-                        .HasForeignKey("IdUsuario");
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ExamVault.Api.Modulos.Administracion.Dominio.Entidades.Materia", b =>

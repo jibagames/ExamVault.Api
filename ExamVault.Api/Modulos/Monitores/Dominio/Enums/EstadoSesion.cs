@@ -1,4 +1,4 @@
-﻿namespace ExamVault.API.Domain.Enums;
+﻿namespace ExamVault.API.Modulos.Monitores.Dominio.Enums;
 
 public enum EstadoSesion
 {

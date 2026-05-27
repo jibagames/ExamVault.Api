@@ -8,7 +8,7 @@ namespace ExamVault.Api.Modulos.Administracion.Infraestructura.Persistencia.Conf
     {
         public void Configure(EntityTypeBuilder<Auditoria> builder)
         {
-            builder.ToTable("Auditorias");
+            builder.ToTable("Auditoria");
             builder.HasKey(a => a.IdAuditoria);
 
             builder.Property(a => a.AccionAuditada).IsRequired().HasMaxLength(100);

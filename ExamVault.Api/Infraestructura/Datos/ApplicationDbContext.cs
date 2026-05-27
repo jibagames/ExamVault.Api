@@ -3,6 +3,7 @@ using ExamVault.Api.Modulos.Administracion.Infraestructura.Persistencia.Configur
 using ExamVault.Api.Modulos.Autenticacion.Dominio.Entidades;
 using ExamVault.Api.Modulos.Autenticacion.Infraestructura.Persistencia.Configuraciones;
 using ExamVault.Api.Modulos.Monitores.Dominio.Entidades;
+using ExamVault.Api.Modulos.Monitores.Infraestructura.Persistencia.Configuraciones;
 using ExamVault.Api.Modulos.Repositorio.Dominio.Entidades;
 using ExamVault.Api.Modulos.Repositorio.Infraestructura.Persistencia.Configuraciones;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace ExamVault.Api.Infraestructura.Datos
         public DbSet<Materia> Materias { get; set; }
         public DbSet<ProgramaMateria> ProgramasMaterias { get; set; }
         public DbSet<Material> Materiales { get; set; }
-        public DbSet<TipoMaterial> TiposMateriales { get; set; }
+        public DbSet<TipoMaterial> TipoMaterial { get; set; }
         public DbSet<Descarga> Descargas { get; set; }
         public DbSet<Modulos.Monitores.Dominio.Entidades.Monitor> Monitores { get; set; }
         public DbSet<MonitorMateria> MonitoresMaterias { get; set; }
@@ -29,10 +30,9 @@ namespace ExamVault.Api.Infraestructura.Datos
         public DbSet<Calificacion> Calificaciones { get; set; }
         public DbSet<Plan> Planes { get; set; }
         public DbSet<Suscripcion> Suscripciones { get; set; }
-        public DbSet<Auditoria> Auditoria { get; set; }
+        public DbSet<Auditoria> Auditoria { get; set; } 
         public DbSet<Permisos> Permisos { get; set; }
         public DbSet<PermisosAtributos> PermisosAtributos { get; set; }
-        public DbSet<TipoMaterial> TipoMaterial { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,31 +56,15 @@ namespace ExamVault.Api.Infraestructura.Datos
             modelBuilder.ApplyConfiguration(new PermisosAtributosConfiguracion());
             modelBuilder.ApplyConfiguration(new UsuarioRolConfiguracion());
 
-            modelBuilder.Entity<Modulos.Monitores.Dominio.Entidades.Monitor>().HasKey(e => e.IdMonitor);
-            modelBuilder.Entity<SesionMonitoria>().HasKey(e => e.IdSesion);
-            modelBuilder.Entity<Calificacion>().HasKey(e => e.IdCalificacion);
-            modelBuilder.Entity<MonitorMateria>().HasKey(mm => new { mm.IdMonitor, mm.IdMateria });
+            modelBuilder.ApplyConfiguration(new MonitorConfiguracion());
+            modelBuilder.ApplyConfiguration(new MonitorMateriaConfiguracion());
+            modelBuilder.ApplyConfiguration(new SesionMonitoriaConfiguracion());
+            modelBuilder.ApplyConfiguration(new CalificacionConfiguracion());
 
-
-            modelBuilder.Entity<Usuario>(entity =>
-            {
-                entity.HasOne<Institucion>().WithMany().HasForeignKey(u => u.IdInstituciones);
-            });
-
-            modelBuilder.Entity<Modulos.Monitores.Dominio.Entidades.Monitor>(entity =>
-            {
-                entity.HasOne<Usuario>().WithMany().HasForeignKey(m => m.IdUsuario);
-            });
-
-            modelBuilder.Entity<Programa>(entity =>
-            {
-                entity.HasOne<Institucion>().WithMany().HasForeignKey(p => p.IdInstituciones);
-            });
-
-            modelBuilder.Entity<Materia>(entity =>
-            {
-                entity.HasOne<Institucion>().WithMany().HasForeignKey(m => m.IdInstituciones);
-            });
+            modelBuilder.Entity<Usuario>().HasOne<Institucion>().WithMany().HasForeignKey(u => u.IdInstituciones);
+            modelBuilder.Entity<Modulos.Monitores.Dominio.Entidades.Monitor>().HasOne<Usuario>().WithMany().HasForeignKey(m => m.IdUsuario);
+            modelBuilder.Entity<Programa>().HasOne<Institucion>().WithMany().HasForeignKey(p => p.IdInstituciones);
+            modelBuilder.Entity<Materia>().HasOne<Institucion>().WithMany().HasForeignKey(m => m.IdInstituciones);
 
             modelBuilder.Entity<TipoMaterial>(entity =>
             {
@@ -130,13 +114,12 @@ namespace ExamVault.Api.Infraestructura.Datos
                 entity.HasOne<Plan>().WithMany().HasForeignKey(s => s.IdPlanes);
                 entity.HasOne<Institucion>().WithMany().HasForeignKey(s => s.IdInstituciones);
             });
-
-            modelBuilder.Entity<Auditoria>(entity =>
-            {
-                entity.HasKey(e => e.IdAuditoria);
-                entity.Property(e => e.FechaAccion).HasColumnType("timestamp with time zone").HasDefaultValueSql("CURRENT_TIMESTAMP");
-                entity.HasOne<Usuario>().WithMany().HasForeignKey(a => a.IdUsuario);
-            });
+  
+            modelBuilder.Entity<Auditoria>()
+                .HasOne<Usuario>()
+                .WithMany()
+                .HasForeignKey(a => a.IdUsuario)
+                .IsRequired(false);
 
             modelBuilder.Entity<Permisos>(entity =>
             {

@@ -3,6 +3,7 @@ using System;
 using ExamVault.Api.Infraestructura.Datos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ExamVault.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260526204625_PermitirAuditoriaSinUsuario")]
+    partial class PermitirAuditoriaSinUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,7 +46,7 @@ namespace ExamVault.Api.Migrations
                     b.Property<DateTime>("FechaAccion")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("IdUsuario")
+                    b.Property<int>("IdUsuario")
                         .HasColumnType("integer");
 
                     b.Property<string>("IpOrigen")

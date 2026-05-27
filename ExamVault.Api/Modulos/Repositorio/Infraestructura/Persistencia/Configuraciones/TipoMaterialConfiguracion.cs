@@ -8,7 +8,7 @@ namespace ExamVault.Api.Modulos.Repositorio.Infraestructura.Persistencia.Configu
     {
         public void Configure(EntityTypeBuilder<TipoMaterial> builder)
         {
-            builder.ToTable("TiposMateriales");
+            builder.ToTable("TipoMaterial");
 
             builder.HasKey(e => e.IdTipoMaterial);
 

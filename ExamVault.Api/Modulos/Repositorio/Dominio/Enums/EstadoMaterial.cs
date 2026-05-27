@@ -1,4 +1,4 @@
-﻿namespace ExamVault.API.Domain.Enums;
+﻿namespace ExamVault.API.Modulos.Repositorio.Dominio.Enums;
 
 public enum EstadoMaterial
 {

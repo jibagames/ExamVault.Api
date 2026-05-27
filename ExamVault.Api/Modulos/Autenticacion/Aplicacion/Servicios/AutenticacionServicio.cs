@@ -1,6 +1,7 @@
 ﻿using ExamVault.Api.Modulos.Autenticacion.Aplicacion.DTOs;
 using ExamVault.Api.Modulos.Autenticacion.Aplicacion.Interfaces;
 using ExamVault.Api.Modulos.Autenticacion.Dominio.Entidades;
+using System.Text.RegularExpressions;
 
 namespace ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios
 {
@@ -25,20 +26,23 @@ namespace ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios
 
         public async Task RegistrarAsync(RegistroDto peticion)
         {
-            if (string.IsNullOrWhiteSpace(peticion.Correo) || !peticion.Correo.Contains("@"))
+            if (string.IsNullOrWhiteSpace(peticion.Correo))
             {
-                throw new ArgumentException("El correo es obligatorio y debe tener un formato válido.");
+                throw new ArgumentException("El correo es obligatorio.");
+            }
+
+            string patronCorreo = @"^[a-zA-Z0-9._%+-]{3,30}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+
+            if (!Regex.IsMatch(peticion.Correo, patronCorreo))
+            {
+                throw new ArgumentException("El formato del correo electrónico es inválido, contiene caracteres no permitidos o es demasiado largo.");
             }
 
             var partesCorreo = peticion.Correo.Split('@');
-            
-            if (partesCorreo.Length != 2 || string.IsNullOrWhiteSpace(partesCorreo[1]))
-            {
-                throw new ArgumentException("El formato del correo electrónico es inválido.");
-            }
-            
-            var dominio = partesCorreo[1];
+            string dominio = partesCorreo[1]; // <-- Aquí sacamos el texto específico
+
             var institucion = await _institucionRepositorio.ObtenerPorDominioAsync(dominio);
+
 
             if (institucion == null)
             {
@@ -96,9 +100,16 @@ namespace ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios
             }
 
             var roles = await _usuarioRepositorio.ObtenerRolesDeUsuarioAsync(usuario.IdUsuario);
-            var rolPrincipal = (roles != null && roles.Count > 0) ? roles[0] : "Estudiante";
 
-            var rolesParaToken = (roles != null && roles.Count > 0) ? roles : new List<string> { rolPrincipal };
+            string rolPrincipal = "Estudiante";
+            IList<string> rolesParaToken = new List<string> { rolPrincipal };
+
+            if (roles != null && roles.Count > 0)
+            {
+                rolPrincipal = roles[0]; // Extraemos el primer rol
+                rolesParaToken = roles;
+            }
+
             var token = _tokenServicio.GenerarToken(usuario, rolesParaToken);
 
             var respuesta = new RespuestaInicioSesionDto

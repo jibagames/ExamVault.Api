@@ -1,4 +1,4 @@
-﻿namespace ExamVault.API.Domain.Enums;
+﻿namespace ExamVault.API.SharedKernel.Enums;
 
 public enum EstadoCuenta
 {

@@ -1,10 +1,13 @@
 using ExamVault.Api.Infraestructura.Datos;
-using ExamVault.Api.Modulos.Administracion.Infraestructura.Persistencia;
 using ExamVault.Api.Modulos.Administracion.Aplicacion.Interfaces;
 using ExamVault.Api.Modulos.Administracion.Aplicacion.Servicios;
+using ExamVault.Api.Modulos.Administracion.Infraestructura.Persistencia;
+using ExamVault.Api.Modulos.Administracion.Infraestructura.Persistencia.Repositorios;
 using ExamVault.Api.Modulos.Autenticacion.Aplicacion.Interfaces;
 using ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios;
+using ExamVault.Api.Modulos.Autenticacion.Infraestructura.Persistencia.Repositorios;
 using ExamVault.Api.Modulos.Autenticacion.Infraestructura.Seguridad;
+using ExamVault.Api.Modulos.Monitores.Aplicacion.Interfaces;
 using ExamVault.Api.Modulos.Repositorio.Aplicacion.Interfaces;
 using ExamVault.Api.Modulos.Repositorio.Aplicacion.Servicios;
 using ExamVault.Api.Modulos.Repositorio.Infraestructura.Almacenamiento;
@@ -14,14 +17,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
-
-using AutenticacionInstitucionRepositorio = ExamVault.Api.Modulos.Autenticacion.Infraestructura.Persistencia.Repositorios.InstitucionRepositorio;
 using AdministracionInstitucionRepositorio = ExamVault.Api.Modulos.Administracion.Infraestructura.Persistencia.Repositorios.InstitucionRepositorio;
-
-using IAutenticacionInstitucionRepositorio = ExamVault.Api.Modulos.Autenticacion.Aplicacion.Interfaces.IInstitucionRepositorio;
+using AutenticacionInstitucionRepositorio = ExamVault.Api.Modulos.Autenticacion.Infraestructura.Persistencia.Repositorios.InstitucionRepositorio;
 using IAdmininstracionInstitucionRepositorio = ExamVault.Api.Modulos.Administracion.Aplicacion.Interfaces.IInstitucionRepositorio;
-using ExamVault.Api.Modulos.Administracion.Infraestructura.Persistencia.Repositorios;
-using ExamVault.Api.Modulos.Autenticacion.Infraestructura.Persistencia.Repositorios;
+using IAutenticacionInstitucionRepositorio = ExamVault.Api.Modulos.Autenticacion.Aplicacion.Interfaces.IInstitucionRepositorio;
+using ExamVault.Api.Modulos.Monitores.Aplicacion.Servicios;
+using ExamVault.Api.Modulos.Monitores.Infraestructura.Persistencia.Repositorios;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,9 @@ builder.Services.AddScoped<IAcademicoServicio, AcademicoServicio>();
 
 builder.Services.AddScoped<IComercialRepositorio, ComercialRepositorio>();
 builder.Services.AddScoped<IComercialServicio, ComercialServicio>();
+
+builder.Services.AddScoped<IMonitorRepositorio,MonitorRepositorio>();
+builder.Services.AddScoped<IMonitorServicio,MonitorServicio>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -85,9 +89,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.WebHost.UseSentry(o => {
     o.Dsn = builder.Configuration["Sentry:Dsn"];
     o.Debug = true;
+    o.TracesSampleRate = 1.0;
 });
 
 var app = builder.Build();
+
+// Middleware de Sentry en la cabecera del pipeline
+app.UseSentryTracing();
+
+app.UseSerilogRequestLogging();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseSerilogRequestLogging();
 

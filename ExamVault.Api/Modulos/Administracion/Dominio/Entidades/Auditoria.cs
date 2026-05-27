@@ -7,7 +7,7 @@
         public string AccionAuditada { get; set; } = string.Empty;
         public string Detalle { get; set; } = string.Empty;
         public string IpOrigen { get; set; } = string.Empty;
-        public int IdUsuario { get; set; }
+        public int? IdUsuario { get; set; }
     }
 }
 
