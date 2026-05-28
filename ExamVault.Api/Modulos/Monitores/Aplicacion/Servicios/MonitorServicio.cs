@@ -1,6 +1,7 @@
 ﻿using ExamVault.Api.Modulos.Monitores.Aplicacion.DTOs;
 using ExamVault.Api.Modulos.Monitores.Aplicacion.Interfaces;
 using ExamVault.Api.Modulos.Monitores.Dominio.Entidades;
+using ExamVault.API.Modulos.Monitores.Dominio.Enums; 
 
 namespace ExamVault.Api.Modulos.Monitores.Aplicacion.Servicios
 {
@@ -55,14 +56,14 @@ namespace ExamVault.Api.Modulos.Monitores.Aplicacion.Servicios
                 FechaProgramada = peticion.FechaProgramada,
                 Modalidad = peticion.Modalidad,
                 Ubicacion = peticion.Ubicacion,
-                Estado = "PENDIENTE",
+                Estado = EstadoSesion.Pendiente,
                 SolicitadoEn = DateTime.UtcNow
             };
 
             return await _repositorio.CrearSesionAsync(sesion);
         }
 
-        public async Task ResponderSolicitudSesionAsync(int idSesion, string nuevoEstado, int idUsuarioMonitor)
+        public async Task ResponderSolicitudSesionAsync(int idSesion, EstadoSesion nuevoEstado, int idUsuarioMonitor)
         {
             var sesion = await _repositorio.ObtenerSesionAsync(idSesion);
 
@@ -71,13 +72,7 @@ namespace ExamVault.Api.Modulos.Monitores.Aplicacion.Servicios
                 throw new ArgumentException("La sesión no existe.");
             }
 
-            string[] estadosValidos = { "ACEPTADA", "RECHAZADA", "COMPLETADA", "CANCELADA" };
-            if (!estadosValidos.Contains(nuevoEstado.ToUpper()))
-            {
-                throw new ArgumentException("Estado no válido.");
-            }
-
-            sesion.Estado = nuevoEstado.ToUpper();
+            sesion.Estado = nuevoEstado; 
             await _repositorio.ActualizarSesionAsync(sesion);
         }
 
@@ -90,7 +85,7 @@ namespace ExamVault.Api.Modulos.Monitores.Aplicacion.Servicios
                 throw new ArgumentException("La sesión no existe o no pertenece al estudiante.");
             }
 
-            if (sesion.Estado != "COMPLETADA")
+            if (sesion.Estado != EstadoSesion.Completa)
             {
                 throw new InvalidOperationException("Solo se pueden calificar sesiones completadas.");
             }
@@ -106,12 +101,18 @@ namespace ExamVault.Api.Modulos.Monitores.Aplicacion.Servicios
             return await _repositorio.CrearCalificacionAsync(calificacion);
         }
 
-        public Task<IEnumerable<Dominio.Entidades.Monitor>> ListarMonitoresPorMateriaAsync(int idMateria)
+
+        public async Task<IEnumerable<Dominio.Entidades.Monitor>> ListarMonitoresPorMateriaAsync(int idMateria)
         {
-            throw new NotImplementedException();
+            return await _repositorio.ObtenerMonitoresPorMateriaAsync(idMateria);
         }
 
-        public Task<IEnumerable<SesionMonitoria>> ListarMisSesionesAsync(int idUsuario, string rol)
+        public async Task<IEnumerable<SesionMonitoria>> ListarMisSesionesAsync(int idUsuario, string rol)
+        {
+            return await _repositorio.ObtenerSesionesPorUsuarioAsync(idUsuario, rol);
+        }
+
+        public Task ResponderSolicitudSesionAsync(int idSesion, string nuevoEstado, int idUsuarioMonitor)
         {
             throw new NotImplementedException();
         }

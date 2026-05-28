@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ExamVault.API.Modulos.Repositorio.Dominio.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.DTOs
 {
@@ -6,6 +7,6 @@ namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.DTOs
     {
         [Required(ErrorMessage = "El estado es obligatorio.")]
         [RegularExpression("^(APROBADO|RECHAZADO)$", ErrorMessage = "El estado solo puede ser APROBADO o RECHAZADO.")]
-        public string NuevoEstado { get; set; } = string.Empty;
+        public EstadoMaterial NuevoEstado { get; set; }
     }
 }

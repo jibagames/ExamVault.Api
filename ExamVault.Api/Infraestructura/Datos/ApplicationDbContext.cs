@@ -6,6 +6,9 @@ using ExamVault.Api.Modulos.Monitores.Dominio.Entidades;
 using ExamVault.Api.Modulos.Monitores.Infraestructura.Persistencia.Configuraciones;
 using ExamVault.Api.Modulos.Repositorio.Dominio.Entidades;
 using ExamVault.Api.Modulos.Repositorio.Infraestructura.Persistencia.Configuraciones;
+using ExamVault.API.Modulos.Monitores.Dominio.Enums;
+using ExamVault.API.Modulos.Repositorio.Dominio.Enums;
+using ExamVault.API.SharedKernel.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamVault.Api.Infraestructura.Datos
@@ -132,6 +135,30 @@ namespace ExamVault.Api.Infraestructura.Datos
                 entity.ToTable("PermisosAtributos");
                 entity.HasOne<Rol>().WithMany().HasForeignKey(c => c.IdRol).HasConstraintName("PERMISOS_ATRIBUTOS_ROLES_FK").OnDelete(DeleteBehavior.Cascade);
             });
+
+            // 1. Conversión para EstadoCuenta en Usuario
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.Estado)
+                .HasConversion(
+                    v => v.ToString().ToUpper(),
+                    v => (EstadoCuenta)Enum.Parse(typeof(EstadoCuenta), v, true)
+                );
+
+            // 2. Conversión para EstadoMaterial en Material
+            modelBuilder.Entity<Material>()
+                .Property(m => m.Estado)
+                .HasConversion(
+                    v => v.ToString().ToUpper(),
+                    v => (EstadoMaterial)Enum.Parse(typeof(EstadoMaterial), v, true)
+                );
+
+            // 3. Conversión para EstadoSesion en SesionMonitoria
+            modelBuilder.Entity<SesionMonitoria>()
+                .Property(s => s.Estado)
+                .HasConversion(
+                    v => v.ToString().ToUpper(),
+                    v => (EstadoSesion)Enum.Parse(typeof(EstadoSesion), v, true)
+                );
         }
     }
 }

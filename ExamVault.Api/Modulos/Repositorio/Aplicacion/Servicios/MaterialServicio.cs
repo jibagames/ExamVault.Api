@@ -1,7 +1,8 @@
-﻿using ExamVault.Api.Modulos.Repositorio.Aplicacion.DTOs;
+﻿using ExamVault.Api.Modulos.Administracion.Aplicacion.Interfaces;
+using ExamVault.Api.Modulos.Repositorio.Aplicacion.DTOs;
 using ExamVault.Api.Modulos.Repositorio.Aplicacion.Interfaces;
 using ExamVault.Api.Modulos.Repositorio.Dominio.Entidades;
-using ExamVault.Api.Modulos.Administracion.Aplicacion.Interfaces;
+using ExamVault.API.Modulos.Repositorio.Dominio.Enums;
 
 namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.Servicios
 {
@@ -21,19 +22,54 @@ namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.Servicios
             _comercialServicio = comercialServicio;
         }
 
+        public async Task<bool> ModerarMaterialAsync(int idMaterial, EstadoMaterial nuevoEstado, int idModerador)
+        {
+            var material = await _repositorio.ObtenerPorIdAsync(idMaterial);
+
+            if (material == null)
+            {
+                return false;
+            }
+
+            material.Estado = nuevoEstado;
+            material.FechaModeracion = DateTime.UtcNow;
+            material.IdModerador = idModerador;
+
+            await _repositorio.ActualizarAsync(material);
+
+            return true;
+        }
+
         public Task<bool> ModerarMaterialAsync(int idMaterial, string nuevoEstado, int idModerador)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<MaterialRespuestaDto>> ObtenerMaterialesAprobadosPorMateriaAsync(int idMateria)
+        public async Task<IEnumerable<MaterialRespuestaDto>> ObtenerMaterialesAprobadosPorMateriaAsync(int idMateria)
         {
-            throw new NotImplementedException();
+            var materiales = await _repositorio.ObtenerAprobadosPorMateriaAsync(idMateria);
+
+            return materiales.Select(m => new MaterialRespuestaDto
+            {
+                IdMaterial = m.IdMaterial,
+                Titulo = m.Titulo,
+                TamanoBytes = m.TamanoBytes,
+                IdTipoMaterial = m.IdTipoMaterial
+            });
         }
 
-        public Task<string> ObtenerUrlDescargaAsync(int idMaterial)
+        public async Task<string> ObtenerUrlDescargaAsync(int idMaterial)
         {
-            throw new NotImplementedException();
+            var material = await _repositorio.ObtenerPorIdAsync(idMaterial);
+
+            // Si el material no existe o no está aprobado, no se puede descargar
+            if (material == null || material.Estado != EstadoMaterial.Aprobado)
+            {
+                return string.Empty;
+            }
+
+            // Generamos la URL temporal que expira en 15 minutos
+            return _servicioAlmacenamiento.GenerarUrlPreFirmada(material.UrlArchivo, 15);
         }
 
         public async Task<int> SubirMaterialAsync(SubirMaterialDto peticion, int idUsuarioLogueado, string rolUsuario)
@@ -64,7 +100,7 @@ namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.Servicios
             }
 
             bool esSubidaOficial = rolUsuario == "Institucion" || rolUsuario == "Profesor" || rolUsuario == "Administrador";
-            string estadoInicial = esSubidaOficial ? "APROBADO" : "PENDIENTE";
+            EstadoMaterial estadoInicial = esSubidaOficial ? EstadoMaterial.Aprobado : EstadoMaterial.Pendiente;
             DateTime? fechaModeracion = esSubidaOficial ? DateTime.UtcNow : null;
 
             using var flujoArchivo = peticion.Archivo.OpenReadStream();

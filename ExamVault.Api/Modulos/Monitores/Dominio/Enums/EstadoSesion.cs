@@ -1,9 +1,10 @@
-﻿namespace ExamVault.API.Modulos.Monitores.Dominio.Enums;
-
-public enum EstadoSesion
+﻿namespace ExamVault.API.Modulos.Monitores.Dominio.Enums
 {
-    Pendiente,
-    Confirmada,
-    Completa,
-    Cancelada
+ public enum EstadoSesion
+    {
+        Pendiente,
+        Confirmada,
+        Completa,
+        Cancelada
+    }
 }

@@ -7,5 +7,8 @@ namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.Interfaces
         Task<Material> AgregarAsync(Material material);
         Task<int> ObtenerIdInstitucionPorMateriaAsync(int idMateria);
         Task<long> CalcularAlmacenamientoUsadoAsync(int idInstitucion);
+        Task<Material?> ObtenerPorIdAsync(int idMaterial);
+        Task ActualizarAsync(Material material);
+        Task<IEnumerable<Material>> ObtenerAprobadosPorMateriaAsync(int idMateria);
     }
 }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ExamVault.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260526201904_ArreglarMapeosAuditoria")]
-    partial class ArreglarMapeosAuditoria
+    [Migration("20260528031705_ImplementacionEnums")]
+    partial class ImplementacionEnums
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,7 +46,7 @@ namespace ExamVault.Api.Migrations
                     b.Property<DateTime>("FechaAccion")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("IdUsuario")
+                    b.Property<int?>("IdUsuario")
                         .HasColumnType("integer");
 
                     b.Property<string>("IpOrigen")
@@ -58,7 +58,7 @@ namespace ExamVault.Api.Migrations
 
                     b.HasIndex("IdUsuario");
 
-                    b.ToTable("Auditorias", (string)null);
+                    b.ToTable("Auditoria", (string)null);
                 });
 
             modelBuilder.Entity("ExamVault.Api.Modulos.Administracion.Dominio.Entidades.Institucion", b =>
@@ -349,10 +349,6 @@ namespace ExamVault.Api.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<string>("Roles")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("SegundoNombre")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
@@ -587,16 +583,14 @@ namespace ExamVault.Api.Migrations
 
                     b.HasKey("IdTipoMaterial");
 
-                    b.ToTable("TiposMateriales", (string)null);
+                    b.ToTable("TipoMaterial", (string)null);
                 });
 
             modelBuilder.Entity("ExamVault.Api.Modulos.Administracion.Dominio.Entidades.Auditoria", b =>
                 {
                     b.HasOne("ExamVault.Api.Modulos.Autenticacion.Dominio.Entidades.Usuario", null)
                         .WithMany()
-                        .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdUsuario");
                 });
 
             modelBuilder.Entity("ExamVault.Api.Modulos.Administracion.Dominio.Entidades.Materia", b =>

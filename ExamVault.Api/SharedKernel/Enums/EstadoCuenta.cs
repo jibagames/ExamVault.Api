@@ -1,7 +1,8 @@
-﻿namespace ExamVault.API.SharedKernel.Enums;
-
-public enum EstadoCuenta
+﻿namespace ExamVault.API.SharedKernel.Enums
 {
-    Activo,
-    Suspendido
+    public enum EstadoCuenta
+    {
+        Activo,
+        Suspendido
+    }
 }

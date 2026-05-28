@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ExamVault.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class ImplementacionEnums : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,9 +18,9 @@ namespace ExamVault.Api.Migrations
                 {
                     IdInstituciones = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    NombreInstitucion = table.Column<string>(type: "text", nullable: false),
-                    DominioCorreo = table.Column<string>(type: "text", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false),
+                    NombreInstitucion = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    DominioCorreo = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Estado = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Creado = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -46,9 +46,9 @@ namespace ExamVault.Api.Migrations
                 {
                     IdPlanes = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    NombreDelPlan = table.Column<string>(type: "text", nullable: false),
+                    NombreDelPlan = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     LimiteAlmacenamiento = table.Column<int>(type: "integer", nullable: false),
-                    PrecioMensual = table.Column<decimal>(type: "numeric", nullable: false),
+                    PrecioMensual = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     LimiteEstudiantes = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -57,24 +57,12 @@ namespace ExamVault.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProgramasMaterias",
-                columns: table => new
-                {
-                    IdPrograma = table.Column<int>(type: "integer", nullable: false),
-                    IdMateria = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProgramasMaterias", x => new { x.IdPrograma, x.IdMateria });
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
                     IdRol = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    NombreRol = table.Column<string>(type: "text", nullable: false)
+                    NombreRol = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,8 +100,8 @@ namespace ExamVault.Api.Migrations
                 {
                     IdMateria = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Codigo = table.Column<string>(type: "text", nullable: false),
+                    Nombre = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Codigo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     IdInstituciones = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -124,7 +112,7 @@ namespace ExamVault.Api.Migrations
                         column: x => x.IdInstituciones,
                         principalTable: "Instituciones",
                         principalColumn: "IdInstituciones",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -133,8 +121,8 @@ namespace ExamVault.Api.Migrations
                 {
                     IdPrograma = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    NombrePrograma = table.Column<string>(type: "text", nullable: false),
-                    Descripcion = table.Column<string>(type: "text", nullable: true),
+                    NombrePrograma = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Descripcion = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     IdInstituciones = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -145,7 +133,7 @@ namespace ExamVault.Api.Migrations
                         column: x => x.IdInstituciones,
                         principalTable: "Instituciones",
                         principalColumn: "IdInstituciones",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -154,14 +142,14 @@ namespace ExamVault.Api.Migrations
                 {
                     IdUsuario = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PrimerNombre = table.Column<string>(type: "text", nullable: false),
-                    SegundoNombre = table.Column<string>(type: "text", nullable: true),
-                    Apellidos = table.Column<string>(type: "text", nullable: false),
-                    Correo = table.Column<string>(type: "text", nullable: false),
-                    ContrasenaHash = table.Column<string>(type: "text", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false),
-                    FotoUrl = table.Column<string>(type: "text", nullable: true),
-                    Contacto = table.Column<string>(type: "text", nullable: true),
+                    PrimerNombre = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    SegundoNombre = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Apellidos = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Correo = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    ContrasenaHash = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Estado = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    FotoUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Contacto = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     IdInstituciones = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -183,7 +171,7 @@ namespace ExamVault.Api.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FechaInicio = table.Column<DateTime>(type: "date", nullable: false),
                     FechaFin = table.Column<DateTime>(type: "date", nullable: false),
-                    Estado = table.Column<string>(type: "text", nullable: false),
+                    Estado = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     IdPlanes = table.Column<int>(type: "integer", nullable: false),
                     IdInstituciones = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -211,8 +199,8 @@ namespace ExamVault.Api.Migrations
                     IdPermiso = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     IdRol = table.Column<int>(type: "integer", nullable: false),
-                    NombreTabla = table.Column<string>(type: "text", nullable: false),
-                    Permiso = table.Column<string>(type: "text", nullable: false)
+                    NombreTabla = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Permiso = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -232,9 +220,9 @@ namespace ExamVault.Api.Migrations
                     IdPermisoAtributo = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     IdRol = table.Column<int>(type: "integer", nullable: false),
-                    NombreTabla = table.Column<string>(type: "text", nullable: false),
-                    NombreAtributo = table.Column<string>(type: "text", nullable: false),
-                    Permiso = table.Column<string>(type: "text", nullable: false)
+                    NombreTabla = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    NombreAtributo = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Permiso = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -248,16 +236,40 @@ namespace ExamVault.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProgramasMaterias",
+                columns: table => new
+                {
+                    IdPrograma = table.Column<int>(type: "integer", nullable: false),
+                    IdMateria = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProgramasMaterias", x => new { x.IdPrograma, x.IdMateria });
+                    table.ForeignKey(
+                        name: "FK_ProgramasMaterias_Materias_IdMateria",
+                        column: x => x.IdMateria,
+                        principalTable: "Materias",
+                        principalColumn: "IdMateria",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProgramasMaterias_Programas_IdPrograma",
+                        column: x => x.IdPrograma,
+                        principalTable: "Programas",
+                        principalColumn: "IdPrograma",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Auditoria",
                 columns: table => new
                 {
                     IdAuditoria = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FechaAccion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    AccionAuditada = table.Column<string>(type: "text", nullable: false),
-                    Detalle = table.Column<string>(type: "text", nullable: false),
-                    IpOrigen = table.Column<string>(type: "text", nullable: false),
-                    IdUsuario = table.Column<int>(type: "integer", nullable: false)
+                    FechaAccion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AccionAuditada = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Detalle = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    IpOrigen = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    IdUsuario = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -266,35 +278,7 @@ namespace ExamVault.Api.Migrations
                         name: "FK_Auditoria_Usuarios_IdUsuario",
                         column: x => x.IdUsuario,
                         principalTable: "Usuarios",
-                        principalColumn: "IdUsuario",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Descargas",
-                columns: table => new
-                {
-                    IdDescarga = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FechaDescarga = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IdUsuario = table.Column<int>(type: "integer", nullable: false),
-                    IdMaterial = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Descargas", x => x.IdDescarga);
-                    table.ForeignKey(
-                        name: "FK_Descargas_TipoMaterial_IdMaterial",
-                        column: x => x.IdMaterial,
-                        principalTable: "TipoMaterial",
-                        principalColumn: "IdTipoMaterial",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Descargas_Usuarios_IdUsuario",
-                        column: x => x.IdUsuario,
-                        principalTable: "Usuarios",
-                        principalColumn: "IdUsuario",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "IdUsuario");
                 });
 
             migrationBuilder.CreateTable(
@@ -327,18 +311,19 @@ namespace ExamVault.Api.Migrations
                         column: x => x.IdTipoMaterial,
                         principalTable: "TipoMaterial",
                         principalColumn: "IdTipoMaterial",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Materiales_Usuarios_IdModerador",
                         column: x => x.IdModerador,
                         principalTable: "Usuarios",
-                        principalColumn: "IdUsuario");
+                        principalColumn: "IdUsuario",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Materiales_Usuarios_IdUsuario",
                         column: x => x.IdUsuario,
                         principalTable: "Usuarios",
                         principalColumn: "IdUsuario",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -348,8 +333,8 @@ namespace ExamVault.Api.Migrations
                     IdMonitor = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     IdUsuario = table.Column<int>(type: "integer", nullable: false),
-                    Disponibilidad = table.Column<string>(type: "text", nullable: false),
-                    Presentacion = table.Column<string>(type: "text", nullable: false)
+                    Disponibilidad = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Presentacion = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -363,30 +348,63 @@ namespace ExamVault.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SesionesMonitores",
+                name: "Descargas",
+                columns: table => new
+                {
+                    IdDescarga = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FechaDescarga = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IdUsuario = table.Column<int>(type: "integer", nullable: false),
+                    IdMaterial = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Descargas", x => x.IdDescarga);
+                    table.ForeignKey(
+                        name: "FK_Descargas_Materiales_IdMaterial",
+                        column: x => x.IdMaterial,
+                        principalTable: "Materiales",
+                        principalColumn: "IdMaterial",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Descargas_TipoMaterial_IdMaterial",
+                        column: x => x.IdMaterial,
+                        principalTable: "TipoMaterial",
+                        principalColumn: "IdTipoMaterial",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Descargas_Usuarios_IdUsuario",
+                        column: x => x.IdUsuario,
+                        principalTable: "Usuarios",
+                        principalColumn: "IdUsuario",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SesionesMonitoria",
                 columns: table => new
                 {
                     IdSesion = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Estado = table.Column<string>(type: "text", nullable: false),
+                    Estado = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     SolicitadoEn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     FechaProgramada = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Modalidad = table.Column<string>(type: "text", nullable: false),
-                    Ubicacion = table.Column<string>(type: "text", nullable: true),
+                    Modalidad = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Ubicacion = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     IdUsuario = table.Column<int>(type: "integer", nullable: false),
                     IdMonitor = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SesionesMonitores", x => x.IdSesion);
+                    table.PrimaryKey("PK_SesionesMonitoria", x => x.IdSesion);
                     table.ForeignKey(
-                        name: "FK_SesionesMonitores_Monitores_IdMonitor",
+                        name: "FK_SesionesMonitoria_Monitores_IdMonitor",
                         column: x => x.IdMonitor,
                         principalTable: "Monitores",
                         principalColumn: "IdMonitor",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SesionesMonitores_Usuarios_IdUsuario",
+                        name: "FK_SesionesMonitoria_Usuarios_IdUsuario",
                         column: x => x.IdUsuario,
                         principalTable: "Usuarios",
                         principalColumn: "IdUsuario",
@@ -400,7 +418,7 @@ namespace ExamVault.Api.Migrations
                     IdCalificacion = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Estrellas = table.Column<int>(type: "integer", nullable: false),
-                    Comentario = table.Column<string>(type: "text", nullable: true),
+                    Comentario = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     CreadoEn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IdSesion = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -408,9 +426,9 @@ namespace ExamVault.Api.Migrations
                 {
                     table.PrimaryKey("PK_Calificaciones", x => x.IdCalificacion);
                     table.ForeignKey(
-                        name: "FK_Calificaciones_SesionesMonitores_IdSesion",
+                        name: "FK_Calificaciones_SesionesMonitoria_IdSesion",
                         column: x => x.IdSesion,
-                        principalTable: "SesionesMonitores",
+                        principalTable: "SesionesMonitoria",
                         principalColumn: "IdSesion",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -434,6 +452,12 @@ namespace ExamVault.Api.Migrations
                 name: "IX_Descargas_IdUsuario",
                 table: "Descargas",
                 column: "IdUsuario");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Instituciones_DominioCorreo",
+                table: "Instituciones",
+                column: "DominioCorreo",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Materiales_IdMateria",
@@ -481,13 +505,18 @@ namespace ExamVault.Api.Migrations
                 column: "IdInstituciones");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SesionesMonitores_IdMonitor",
-                table: "SesionesMonitores",
+                name: "IX_ProgramasMaterias_IdMateria",
+                table: "ProgramasMaterias",
+                column: "IdMateria");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SesionesMonitoria_IdMonitor",
+                table: "SesionesMonitoria",
                 column: "IdMonitor");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SesionesMonitores_IdUsuario",
-                table: "SesionesMonitores",
+                name: "IX_SesionesMonitoria_IdUsuario",
+                table: "SesionesMonitoria",
                 column: "IdUsuario");
 
             migrationBuilder.CreateIndex(
@@ -499,6 +528,12 @@ namespace ExamVault.Api.Migrations
                 name: "IX_Suscripciones_IdPlanes",
                 table: "Suscripciones",
                 column: "IdPlanes");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_Correo",
+                table: "Usuarios",
+                column: "Correo",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_IdInstituciones",
@@ -519,9 +554,6 @@ namespace ExamVault.Api.Migrations
                 name: "Descargas");
 
             migrationBuilder.DropTable(
-                name: "Materiales");
-
-            migrationBuilder.DropTable(
                 name: "MonitoresMaterias");
 
             migrationBuilder.DropTable(
@@ -529,9 +561,6 @@ namespace ExamVault.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "PermisosAtributos");
-
-            migrationBuilder.DropTable(
-                name: "Programas");
 
             migrationBuilder.DropTable(
                 name: "ProgramasMaterias");
@@ -543,22 +572,28 @@ namespace ExamVault.Api.Migrations
                 name: "UsuariosRoles");
 
             migrationBuilder.DropTable(
-                name: "SesionesMonitores");
+                name: "SesionesMonitoria");
 
             migrationBuilder.DropTable(
-                name: "Materias");
-
-            migrationBuilder.DropTable(
-                name: "TipoMaterial");
+                name: "Materiales");
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Programas");
 
             migrationBuilder.DropTable(
                 name: "Planes");
 
             migrationBuilder.DropTable(
                 name: "Monitores");
+
+            migrationBuilder.DropTable(
+                name: "Materias");
+
+            migrationBuilder.DropTable(
+                name: "TipoMaterial");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");

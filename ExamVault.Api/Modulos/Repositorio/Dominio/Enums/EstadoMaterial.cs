@@ -1,8 +1,9 @@
-﻿namespace ExamVault.API.Modulos.Repositorio.Dominio.Enums;
-
-public enum EstadoMaterial
+﻿namespace ExamVault.API.Modulos.Repositorio.Dominio.Enums
 {
-    Pendiente,
-    Aprobado,
-    Rechazado
+    public enum EstadoMaterial
+    {
+        Pendiente,
+        Aprobado,
+        Rechazado
+    }
 }

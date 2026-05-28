@@ -1,6 +1,7 @@
 ﻿using ExamVault.Api.Modulos.Autenticacion.Aplicacion.DTOs;
 using ExamVault.Api.Modulos.Autenticacion.Aplicacion.Interfaces;
 using ExamVault.Api.Modulos.Autenticacion.Dominio.Entidades;
+using ExamVault.API.SharedKernel.Enums;
 using System.Text.RegularExpressions;
 
 namespace ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios
@@ -39,10 +40,9 @@ namespace ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios
             }
 
             var partesCorreo = peticion.Correo.Split('@');
-            string dominio = partesCorreo[1]; // <-- Aquí sacamos el texto específico
+            string dominio = partesCorreo[1];
 
             var institucion = await _institucionRepositorio.ObtenerPorDominioAsync(dominio);
-
 
             if (institucion == null)
             {
@@ -63,7 +63,9 @@ namespace ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios
                 Apellidos = peticion.Apellidos,
                 Correo = peticion.Correo,
                 ContrasenaHash = _encriptadorServicio.Encriptar(peticion.Contrasena),
-                Estado = "ACTIVO",
+
+                Estado = EstadoCuenta.Activo,
+
                 IdInstituciones = institucion.IdInstituciones
             };
 
@@ -72,7 +74,7 @@ namespace ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios
             var usuarioRol = new UsuarioRol
             {
                 IdUsuario = usuario.IdUsuario,
-                IdRol = 1
+                IdRol = (int)RolUsuario.Estudiante
             };
 
             await _usuarioRepositorio.AgregarRolAsync(usuarioRol);
@@ -82,37 +84,30 @@ namespace ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios
         {
             var usuario = await _usuarioRepositorio.ObtenerPorCorreoAsync(peticion.Correo);
 
-            if (usuario == null)
+            if (usuario == null || !_encriptadorServicio.Verificar(peticion.Contrasena, usuario.ContrasenaHash))
             {
                 throw new UnauthorizedAccessException("Credenciales incorrectas.");
             }
 
-            var contrasenaValida = _encriptadorServicio.Verificar(peticion.Contrasena, usuario.ContrasenaHash);
-
-            if (!contrasenaValida)
-            {
-                throw new UnauthorizedAccessException("Credenciales incorrectas.");
-            }
-
-            if (usuario.Estado != "ACTIVO")
+            if (usuario.Estado != EstadoCuenta.Activo)
             {
                 throw new UnauthorizedAccessException("La cuenta de usuario no está activa o se encuentra suspendida.");
             }
 
             var roles = await _usuarioRepositorio.ObtenerRolesDeUsuarioAsync(usuario.IdUsuario);
 
-            string rolPrincipal = "Estudiante";
+            string rolPrincipal = RolUsuario.Estudiante.ToString();
             IList<string> rolesParaToken = new List<string> { rolPrincipal };
 
             if (roles != null && roles.Count > 0)
             {
-                rolPrincipal = roles[0]; // Extraemos el primer rol
+                rolPrincipal = roles[0];
                 rolesParaToken = roles;
             }
 
             var token = _tokenServicio.GenerarToken(usuario, rolesParaToken);
 
-            var respuesta = new RespuestaInicioSesionDto
+            return new RespuestaInicioSesionDto
             {
                 Token = token,
                 Usuario = new UsuarioDto
@@ -124,43 +119,19 @@ namespace ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios
                     InstitucionId = usuario.IdInstituciones
                 }
             };
-
-            return respuesta;
         }
 
         public async Task ActualizarPerfilAsync(int idUsuario, ActualizarPerfilDto peticion)
         {
             var usuario = await _usuarioRepositorio.ObtenerPorIdAsync(idUsuario);
 
-            if (usuario == null)
-            {
-                throw new ArgumentException("Usuario no encontrado.");
-            }
+            if (usuario == null) throw new ArgumentException("Usuario no encontrado.");
 
-            if (!string.IsNullOrWhiteSpace(peticion.PrimerNombre))
-            {
-                usuario.PrimerNombre = peticion.PrimerNombre;
-            }
-
-            if (!string.IsNullOrWhiteSpace(peticion.SegundoNombre))
-            {
-                usuario.SegundoNombre = peticion.SegundoNombre;
-            }
-
-            if (!string.IsNullOrWhiteSpace(peticion.Apellidos))
-            {
-                usuario.Apellidos = peticion.Apellidos;
-            }
-
-            if (!string.IsNullOrWhiteSpace(peticion.FotoUrl))
-            {
-                usuario.FotoUrl = peticion.FotoUrl;
-            }
-
-            if (!string.IsNullOrWhiteSpace(peticion.Contacto))
-            {
-                usuario.Contacto = peticion.Contacto;
-            }
+            if (!string.IsNullOrWhiteSpace(peticion.PrimerNombre)) usuario.PrimerNombre = peticion.PrimerNombre;
+            if (!string.IsNullOrWhiteSpace(peticion.SegundoNombre)) usuario.SegundoNombre = peticion.SegundoNombre;
+            if (!string.IsNullOrWhiteSpace(peticion.Apellidos)) usuario.Apellidos = peticion.Apellidos;
+            if (!string.IsNullOrWhiteSpace(peticion.FotoUrl)) usuario.FotoUrl = peticion.FotoUrl;
+            if (!string.IsNullOrWhiteSpace(peticion.Contacto)) usuario.Contacto = peticion.Contacto;
 
             await _usuarioRepositorio.ActualizarAsync(usuario);
         }
@@ -173,16 +144,12 @@ namespace ExamVault.Api.Modulos.Autenticacion.Aplicacion.Servicios
         public async Task AsignarRolAsync(AsignarRolDto peticion)
         {
             var usuario = await _usuarioRepositorio.ObtenerPorIdAsync(peticion.IdUsuario);
-
-            if (usuario == null)
-            {
-                throw new ArgumentException("El usuario especificado no existe.");
-            }
+            if (usuario == null) throw new ArgumentException("El usuario especificado no existe.");
 
             var usuarioRol = new UsuarioRol
             {
                 IdUsuario = peticion.IdUsuario,
-                IdRol = peticion.IdRol
+                IdRol = peticion.IdRol 
             };
 
             await _usuarioRepositorio.AgregarRolAsync(usuarioRol);

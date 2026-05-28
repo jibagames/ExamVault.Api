@@ -346,10 +346,6 @@ namespace ExamVault.Api.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<string>("Roles")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("SegundoNombre")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");

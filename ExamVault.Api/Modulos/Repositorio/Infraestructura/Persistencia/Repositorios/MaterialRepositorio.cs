@@ -1,6 +1,7 @@
 ﻿using ExamVault.Api.Infraestructura.Datos;
 using ExamVault.Api.Modulos.Repositorio.Aplicacion.Interfaces;
 using ExamVault.Api.Modulos.Repositorio.Dominio.Entidades;
+using ExamVault.API.Modulos.Repositorio.Dominio.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamVault.Api.Modulos.Repositorio.Infraestructura.Persistencia.Repositorios
@@ -14,10 +15,11 @@ namespace ExamVault.Api.Modulos.Repositorio.Infraestructura.Persistencia.Reposit
             _contexto = contexto;
         }
 
-        public async Task AgregarAsync(Material material)
+        public async Task<Material> AgregarAsync(Material material)
         {
             await _contexto.Materiales.AddAsync(material);
             await _contexto.SaveChangesAsync();
+            return material;
         }
 
         public async Task<Material?> ObtenerPorIdAsync(int idMaterial)
@@ -34,7 +36,7 @@ namespace ExamVault.Api.Modulos.Repositorio.Infraestructura.Persistencia.Reposit
         public async Task<IEnumerable<Material>> ObtenerAprobadosPorMateriaAsync(int idMateria)
         {
             return await _contexto.Materiales
-                .Where(m => m.IdMateria == idMateria && m.Estado == "APROBADO")
+                .Where(m => m.IdMateria == idMateria && m.Estado == EstadoMaterial.Aprobado)
                 .ToListAsync();
         }
 
@@ -48,13 +50,8 @@ namespace ExamVault.Api.Modulos.Repositorio.Infraestructura.Persistencia.Reposit
         {
             return await (from m in _contexto.Materiales
                           join mat in _contexto.Materias on m.IdMateria equals mat.IdMateria
-                          where mat.IdInstituciones == idInstitucion && m.Estado != "ELIMINADO"
+                          where mat.IdInstituciones == idInstitucion
                           select (long)m.TamanoBytes).SumAsync();
-        }
-
-        Task<Material> IMaterialRepositorio.AgregarAsync(Material material)
-        {
-            throw new NotImplementedException();
         }
     }
 }
