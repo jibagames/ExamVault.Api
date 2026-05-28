@@ -92,6 +92,8 @@ builder.WebHost.UseSentry(o => {
     o.TracesSampleRate = 1.0;
 });
 
+builder.Services.AddMemoryCache();
+
 var app = builder.Build();
 
 // Middleware de Sentry en la cabecera del pipeline

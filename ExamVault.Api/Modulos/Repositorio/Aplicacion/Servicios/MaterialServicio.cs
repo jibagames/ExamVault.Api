@@ -3,6 +3,7 @@ using ExamVault.Api.Modulos.Repositorio.Aplicacion.DTOs;
 using ExamVault.Api.Modulos.Repositorio.Aplicacion.Interfaces;
 using ExamVault.Api.Modulos.Repositorio.Dominio.Entidades;
 using ExamVault.API.Modulos.Repositorio.Dominio.Enums;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.Servicios
 {
@@ -11,15 +12,18 @@ namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.Servicios
         private readonly IMaterialRepositorio _repositorio;
         private readonly IServicioAlmacenamiento _servicioAlmacenamiento;
         private readonly IComercialServicio _comercialServicio;
+        private readonly IMemoryCache _cache;
 
         public MaterialServicio(
             IMaterialRepositorio repositorio,
             IServicioAlmacenamiento servicioAlmacenamiento,
-            IComercialServicio comercialServicio)
+            IComercialServicio comercialServicio,
+            IMemoryCache cache)
         {
             _repositorio = repositorio;
             _servicioAlmacenamiento = servicioAlmacenamiento;
             _comercialServicio = comercialServicio;
+            _cache = cache;
         }
 
         public async Task<bool> ModerarMaterialAsync(int idMaterial, EstadoMaterial nuevoEstado, int idModerador)
@@ -37,6 +41,8 @@ namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.Servicios
 
             await _repositorio.ActualizarAsync(material);
 
+            _cache.Remove($"materiales_aprobados_materia_{material.IdMateria}");
+
             return true;
         }
 
@@ -47,28 +53,42 @@ namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.Servicios
 
         public async Task<IEnumerable<MaterialRespuestaDto>> ObtenerMaterialesAprobadosPorMateriaAsync(int idMateria)
         {
+            string llaveCache = $"materiales_aprobados_materia_{idMateria}";
+
+            if (_cache.TryGetValue(llaveCache, out IEnumerable<MaterialRespuestaDto>? materialesEnCache))
+            {
+                return materialesEnCache!;
+            }
+
             var materiales = await _repositorio.ObtenerAprobadosPorMateriaAsync(idMateria);
 
-            return materiales.Select(m => new MaterialRespuestaDto
+            var resultado = materiales.Select(m => new MaterialRespuestaDto
             {
                 IdMaterial = m.IdMaterial,
                 Titulo = m.Titulo,
                 TamanoBytes = m.TamanoBytes,
                 IdTipoMaterial = m.IdTipoMaterial
-            });
+            }).ToList();
+
+            var opcionesCache = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15)
+            };
+
+            _cache.Set(llaveCache, resultado, opcionesCache);
+
+            return resultado;
         }
 
         public async Task<string> ObtenerUrlDescargaAsync(int idMaterial)
         {
             var material = await _repositorio.ObtenerPorIdAsync(idMaterial);
 
-            // Si el material no existe o no está aprobado, no se puede descargar
             if (material == null || material.Estado != EstadoMaterial.Aprobado)
             {
                 return string.Empty;
             }
 
-            // Generamos la URL temporal que expira en 15 minutos
             return _servicioAlmacenamiento.GenerarUrlPreFirmada(material.UrlArchivo, 15);
         }
 
@@ -123,6 +143,12 @@ namespace ExamVault.Api.Modulos.Repositorio.Aplicacion.Servicios
             };
 
             await _repositorio.AgregarAsync(nuevoMaterial);
+
+            if (estadoInicial == EstadoMaterial.Aprobado)
+            {
+                _cache.Remove($"materiales_aprobados_materia_{peticion.IdMateria}");
+            }
+
             return nuevoMaterial.IdMaterial;
         }
     }

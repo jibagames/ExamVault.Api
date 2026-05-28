@@ -36,20 +36,24 @@ namespace ExamVault.Api.Modulos.Repositorio.Infraestructura.Persistencia.Reposit
         public async Task<IEnumerable<Material>> ObtenerAprobadosPorMateriaAsync(int idMateria)
         {
             return await _contexto.Materiales
+                .AsNoTracking()
                 .Where(m => m.IdMateria == idMateria && m.Estado == EstadoMaterial.Aprobado)
                 .ToListAsync();
         }
 
         public async Task<int> ObtenerIdInstitucionPorMateriaAsync(int idMateria)
         {
-            var materia = await _contexto.Materias.FirstOrDefaultAsync(m => m.IdMateria == idMateria);
+            var materia = await _contexto.Materias
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.IdMateria == idMateria);
+
             return materia?.IdInstituciones ?? 0;
         }
 
         public async Task<long> CalcularAlmacenamientoUsadoAsync(int idInstitucion)
         {
-            return await (from m in _contexto.Materiales
-                          join mat in _contexto.Materias on m.IdMateria equals mat.IdMateria
+            return await (from m in _contexto.Materiales.AsNoTracking()
+                          join mat in _contexto.Materias.AsNoTracking() on m.IdMateria equals mat.IdMateria
                           where mat.IdInstituciones == idInstitucion
                           select (long)m.TamanoBytes).SumAsync();
         }
