@@ -18,7 +18,7 @@ namespace ExamVault.Api.Modulos.Monitores.Presentacion.Controladores
         }
 
         [HttpPost("registrar")]
-        [Authorize(Roles = "Estudiante,Monitor")]
+        [Authorize(Roles = "Estudiante,Monitor, Administrador")]
         public async Task<IActionResult> RegistrarMonitor([FromBody] RegistrarMonitorDto peticion)
         {
             try
@@ -34,7 +34,7 @@ namespace ExamVault.Api.Modulos.Monitores.Presentacion.Controladores
         }
 
         [HttpPost("sesiones/solicitar")]
-        [Authorize(Roles = "Estudiante")]
+        [Authorize(Roles = "Estudiante, Administrador")]
         public async Task<IActionResult> SolicitarSesion([FromBody] SolicitarSesionDto peticion)
         {
             try
@@ -50,7 +50,7 @@ namespace ExamVault.Api.Modulos.Monitores.Presentacion.Controladores
         }
 
         [HttpPut("sesiones/{idSesion}/estado")]
-        [Authorize(Roles = "Monitor,Administrador")]
+        [Authorize(Roles = "Monitor, Administrador")]
         public async Task<IActionResult> ResponderSesion(int idSesion, [FromBody] string estado)
         {
             try
@@ -66,7 +66,7 @@ namespace ExamVault.Api.Modulos.Monitores.Presentacion.Controladores
         }
 
         [HttpPost("sesiones/calificar")]
-        [Authorize(Roles = "Estudiante")]
+        [Authorize(Roles = "Estudiante, Administrador")]
         public async Task<IActionResult> CalificarSesion([FromBody] CalificarSesionDto peticion)
         {
             try
@@ -111,7 +111,7 @@ namespace ExamVault.Api.Modulos.Monitores.Presentacion.Controladores
         }
 
         [HttpGet("mis-sesiones")]
-        [Authorize(Roles = "Estudiante,Monitor")]
+        [Authorize(Roles = "Estudiante,Monitor, Administrador")]
         public async Task<IActionResult> ObtenerMisSesiones()
         {
             int idUsuario = ObtenerIdUsuarioAutenticado();

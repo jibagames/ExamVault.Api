@@ -7,7 +7,7 @@ namespace ExamVault.Api.Modulos.Administracion.Presentacion.Controladores
 {
     [ApiController]
     [Route("api/administracion/instituciones")]
-    [Authorize(Roles = "Administrador, Coordinador")] 
+    [Authorize(Roles = "Administrador,Coordinador,Institucion")] 
     public class InstitucionControlador : ControllerBase
     {
         private readonly IAdministracionServicio _servicio;
@@ -18,6 +18,7 @@ namespace ExamVault.Api.Modulos.Administracion.Presentacion.Controladores
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> CrearInstitucion([FromBody] CrearInstitucionDto peticion)
         {
             try
@@ -36,7 +37,7 @@ namespace ExamVault.Api.Modulos.Administracion.Presentacion.Controladores
         }
 
         [HttpGet]
-        [AllowAnonymous] 
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> ObtenerInstituciones()
         {
             var instituciones = await _servicio.ListarInstitucionesAsync();

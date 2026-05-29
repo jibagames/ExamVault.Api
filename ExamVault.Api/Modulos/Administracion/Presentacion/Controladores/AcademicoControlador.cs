@@ -7,7 +7,7 @@ namespace ExamVault.Api.Modulos.Administracion.Presentacion.Controladores
 {
     [ApiController]
     [Route("api/administracion/academico")]
-    [Authorize(Roles = "Administrador,Institucion")]
+    [Authorize(Roles = "Administrador,Institucion,Coordinador")]
     public class AcademicoControlador : ControllerBase
     {
         private readonly IAcademicoServicio _servicio;
@@ -15,6 +15,7 @@ namespace ExamVault.Api.Modulos.Administracion.Presentacion.Controladores
         public AcademicoControlador(IAcademicoServicio servicio) => _servicio = servicio;
 
         [HttpPost("programas")]
+        [Authorize(Roles = "Administrador,Institucion,Coordinador")]
         public async Task<IActionResult> CrearPrograma([FromBody] CrearProgramaDto peticion)
         {
             var programa = await _servicio.RegistrarProgramaAsync(peticion);
@@ -22,6 +23,7 @@ namespace ExamVault.Api.Modulos.Administracion.Presentacion.Controladores
         }
 
         [HttpPost("materias")]
+        [Authorize(Roles = "Administrador,Institucion,Coordinador")]
         public async Task<IActionResult> CrearMateria([FromBody] CrearMateriaDto peticion)
         {
             var materia = await _servicio.RegistrarMateriaAsync(peticion);
@@ -29,6 +31,7 @@ namespace ExamVault.Api.Modulos.Administracion.Presentacion.Controladores
         }
 
         [HttpPost("asignaciones")]
+        [Authorize(Roles = "Administrador,Institucion,Coordinador")]
         public async Task<IActionResult> AsignarMateria([FromBody] AsignarMateriaProgramaDto peticion)
         {
             try

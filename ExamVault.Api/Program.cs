@@ -41,7 +41,6 @@ builder.Services.AddScoped<IAdmininstracionInstitucionRepositorio, Administracio
 builder.Services.AddScoped<IAdministracionServicio, AdministracionServicio>();
 builder.Services.AddScoped<IAcademicoRepositorio, AcademicoRepositorio>();
 builder.Services.AddScoped<IAcademicoServicio, AcademicoServicio>();
-
 builder.Services.AddScoped<IComercialRepositorio, ComercialRepositorio>();
 builder.Services.AddScoped<IComercialServicio, ComercialServicio>();
 

@@ -7,7 +7,7 @@ namespace ExamVault.Api.Modulos.Administracion.Presentacion.Controladores
 {
     [ApiController]
     [Route("api/administracion/comercial")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Administrador,Coordinador")]
     public class ComercialControlador : ControllerBase
     {
         private readonly IComercialServicio _servicio;
@@ -15,6 +15,7 @@ namespace ExamVault.Api.Modulos.Administracion.Presentacion.Controladores
         public ComercialControlador(IComercialServicio servicio) => _servicio = servicio;
 
         [HttpPost("planes")]
+        [Authorize(Roles = "Administrador,Institucion,Coordinador")]
         public async Task<IActionResult> CrearPlan([FromBody] CrearPlanDto peticion)
         {
             var plan = await _servicio.RegistrarPlanAsync(peticion);
@@ -22,6 +23,7 @@ namespace ExamVault.Api.Modulos.Administracion.Presentacion.Controladores
         }
 
         [HttpPost("suscripciones")]
+        [Authorize(Roles = "Administrador,Institucion,Coordinador")]
         public async Task<IActionResult> ActivarSuscripcion([FromBody] CrearSuscripcionDto peticion)
         {
             try
